@@ -60,7 +60,7 @@ def send_rules(update, chat_id, from_pm=False):
                 [
                     [
                         InlineKeyboardButton(
-                            text="Rules", url=f"t.me/{bot.username}?start={chat_id}"
+                            text="Rules", url=f"t.me/LOVELYR_OBOT?start={chat_id}"
                         )
                     ]
                 ]
@@ -123,6 +123,7 @@ __help__ = """
 *Admins only:*
  ❍ /setrules <your rules here>*:* set the rules for this chat.
  ❍ /clearrules*:* clear the rules for this chat.
+   Support Group :- @LOVELYAPPEL | For Updates :- @ABOUTVEDMAT
 """
 
 __mod_name__ = "Rᴜʟᴇs👻"
