@@ -2,16 +2,17 @@
 import os
 import shutil
 
-from PIL import Image, ImageOps
+import cv2
+from PIL import Image, ImageEnhance, ImageFilter
 
 
-async def black_border(client, message):
+async def bright(client, message):
     try:
         userid = str(message.chat.id)
         if not os.path.isdir(f"./DOWNLOADS/{userid}"):
             os.makedirs(f"./DOWNLOADS/{userid}")
         download_location = "./DOWNLOADS" + "/" + userid + "/" + userid + ".jpg"
-        edit_img_loc = "./DOWNLOADS" + "/" + userid + "/" + "imaged-black-border.png"
+        edit_img_loc = "./DOWNLOADS" + "/" + userid + "/" + "brightness.jpg"
         if not message.reply_to_message.empty:
             msg = await message.reply_to_message.reply_text(
                 "Downloading image", quote=True
@@ -20,9 +21,9 @@ async def black_border(client, message):
                 message=message.reply_to_message, file_name=download_location
             )
             await msg.edit("Processing Image...")
-            img = Image.open(a)
-            img_with_border = ImageOps.expand(img, border=100, fill="black")
-            img_with_border.save(edit_img_loc)
+            image = Image.open(a)
+            brightness = ImageEnhance.Brightness(image)
+            brightness.enhance(1.5).save(edit_img_loc)
             await message.reply_chat_action("upload_photo")
             await message.reply_to_message.reply_photo(edit_img_loc, quote=True)
             await msg.delete()
@@ -33,7 +34,7 @@ async def black_border(client, message):
         except Exception:
             pass
     except Exception as e:
-        print("black_border-error - " + str(e))
+        print("bright-error - " + str(e))
         if "USER_IS_BLOCKED" in str(e):
             return
         else:
@@ -45,13 +46,13 @@ async def black_border(client, message):
                 return
 
 
-async def green_border(client, message):
+async def mix(client, message):
     try:
         userid = str(message.chat.id)
         if not os.path.isdir(f"./DOWNLOADS/{userid}"):
             os.makedirs(f"./DOWNLOADS/{userid}")
         download_location = "./DOWNLOADS" + "/" + userid + "/" + userid + ".jpg"
-        edit_img_loc = "./DOWNLOADS" + "/" + userid + "/" + "imaged-green-border.png"
+        edit_img_loc = "./DOWNLOADS" + "/" + userid + "/" + "mix.jpg"
         if not message.reply_to_message.empty:
             msg = await message.reply_to_message.reply_text(
                 "Downloading image", quote=True
@@ -60,9 +61,10 @@ async def green_border(client, message):
                 message=message.reply_to_message, file_name=download_location
             )
             await msg.edit("Processing Image...")
-            img = Image.open(a)
-            img_with_border = ImageOps.expand(img, border=100, fill="green")
-            img_with_border.save(edit_img_loc)
+            image = Image.open(a)
+            red, green, blue = image.split()
+            new_image = Image.merge("RGB", (green, red, blue))
+            new_image.save(edit_img_loc)
             await message.reply_chat_action("upload_photo")
             await message.reply_to_message.reply_photo(edit_img_loc, quote=True)
             await msg.delete()
@@ -73,7 +75,7 @@ async def green_border(client, message):
         except Exception:
             pass
     except Exception as e:
-        print("green_border-error - " + str(e))
+        print("mix-error - " + str(e))
         if "USER_IS_BLOCKED" in str(e):
             return
         else:
@@ -85,13 +87,13 @@ async def green_border(client, message):
                 return
 
 
-async def blue_border(client, message):
+async def black_white(client, message):
     try:
         userid = str(message.chat.id)
         if not os.path.isdir(f"./DOWNLOADS/{userid}"):
             os.makedirs(f"./DOWNLOADS/{userid}")
         download_location = "./DOWNLOADS" + "/" + userid + "/" + userid + ".jpg"
-        edit_img_loc = "./DOWNLOADS" + "/" + userid + "/" + "imaged-blue-border.png"
+        edit_img_loc = "./DOWNLOADS" + "/" + userid + "/" + "black_white.jpg"
         if not message.reply_to_message.empty:
             msg = await message.reply_to_message.reply_text(
                 "Downloading image", quote=True
@@ -100,9 +102,9 @@ async def blue_border(client, message):
                 message=message.reply_to_message, file_name=download_location
             )
             await msg.edit("Processing Image...")
-            img = Image.open(a)
-            img_with_border = ImageOps.expand(img, border=100, fill="blue")
-            img_with_border.save(edit_img_loc)
+            image_file = cv2.imread(a)
+            grayImage = cv2.cvtColor(image_file, cv2.COLOR_BGR2GRAY)
+            cv2.imwrite(edit_img_loc, grayImage)
             await message.reply_chat_action("upload_photo")
             await message.reply_to_message.reply_photo(edit_img_loc, quote=True)
             await msg.delete()
@@ -113,7 +115,7 @@ async def blue_border(client, message):
         except Exception:
             pass
     except Exception as e:
-        print("blue_border-error - " + str(e))
+        print("black_white-error - " + str(e))
         if "USER_IS_BLOCKED" in str(e):
             return
         else:
@@ -125,13 +127,13 @@ async def blue_border(client, message):
                 return
 
 
-async def red_border(client, message):
+async def normal_blur(client, message):
     try:
         userid = str(message.chat.id)
         if not os.path.isdir(f"./DOWNLOADS/{userid}"):
             os.makedirs(f"./DOWNLOADS/{userid}")
         download_location = "./DOWNLOADS" + "/" + userid + "/" + userid + ".jpg"
-        edit_img_loc = "./DOWNLOADS" + "/" + userid + "/" + "imaged-red-border.png"
+        edit_img_loc = "./DOWNLOADS" + "/" + userid + "/" + "BlurImage.jpg"
         if not message.reply_to_message.empty:
             msg = await message.reply_to_message.reply_text(
                 "Downloading image", quote=True
@@ -140,9 +142,9 @@ async def red_border(client, message):
                 message=message.reply_to_message, file_name=download_location
             )
             await msg.edit("Processing Image...")
-            img = Image.open(a)
-            img_with_border = ImageOps.expand(img, border=100, fill="red")
-            img_with_border.save(edit_img_loc)
+            OriImage = Image.open(a)
+            blurImage = OriImage.filter(ImageFilter.BLUR)
+            blurImage.save(edit_img_loc)
             await message.reply_chat_action("upload_photo")
             await message.reply_to_message.reply_photo(edit_img_loc, quote=True)
             await msg.delete()
@@ -153,7 +155,87 @@ async def red_border(client, message):
         except Exception:
             pass
     except Exception as e:
-        print("red_border-error - " + str(e))
+        print("normal_blur-error - " + str(e))
+        if "USER_IS_BLOCKED" in str(e):
+            return
+        else:
+            try:
+                await message.reply_to_message.reply_text(
+                    "Something went wrong!", quote=True
+                )
+            except Exception:
+                return
+
+
+async def g_blur(client, message):
+    try:
+        userid = str(message.chat.id)
+        if not os.path.isdir(f"./DOWNLOADS/{userid}"):
+            os.makedirs(f"./DOWNLOADS/{userid}")
+        download_location = "./DOWNLOADS" + "/" + userid + "/" + userid + ".jpg"
+        edit_img_loc = "./DOWNLOADS" + "/" + userid + "/" + "gaussian_blur.jpg"
+        if not message.reply_to_message.empty:
+            msg = await message.reply_to_message.reply_text(
+                "Downloading image", quote=True
+            )
+            a = await client.download_media(
+                message=message.reply_to_message, file_name=download_location
+            )
+            await msg.edit("Processing Image...")
+            im1 = Image.open(a)
+            im2 = im1.filter(ImageFilter.GaussianBlur(radius=5))
+            im2.save(edit_img_loc)
+            await message.reply_chat_action("upload_photo")
+            await message.reply_to_message.reply_photo(edit_img_loc, quote=True)
+            await msg.delete()
+        else:
+            await message.reply_text("Why did you delete that??")
+        try:
+            shutil.rmtree(f"./DOWNLOADS/{userid}")
+        except Exception:
+            pass
+    except Exception as e:
+        print("g_blur-error - " + str(e))
+        if "USER_IS_BLOCKED" in str(e):
+            return
+        else:
+            try:
+                await message.reply_to_message.reply_text(
+                    "Something went wrong!", quote=True
+                )
+            except Exception:
+                return
+
+
+async def box_blur(client, message):
+    try:
+        userid = str(message.chat.id)
+        if not os.path.isdir(f"./DOWNLOADS/{userid}"):
+            os.makedirs(f"./DOWNLOADS/{userid}")
+        download_location = "./DOWNLOADS" + "/" + userid + "/" + userid + ".jpg"
+        edit_img_loc = "./DOWNLOADS" + "/" + userid + "/" + "box_blur.jpg"
+        if not message.reply_to_message.empty:
+            msg = await message.reply_to_message.reply_text(
+                "Downloading image", quote=True
+            )
+            a = await client.download_media(
+                message=message.reply_to_message, file_name=download_location
+            )
+            await msg.edit("Processing Image...")
+            im1 = Image.open(a)
+            im2 = im1.filter(ImageFilter.BoxBlur(0))
+            im2.save(edit_img_loc)
+            await message.reply_chat_action("upload_photo")
+            await message.reply_to_message.reply_photo(edit_img_loc, quote=True)
+            await msg.delete()
+        else:
+            await message.reply_text("Why did you delete that??")
+        try:
+            shutil.rmtree(f"./DOWNLOADS/{userid}")
+        except Exception:
+            pass
+    except Exception as e:
+        print("box_blur-error - " + str(e))
         if "USER_IS_BLOCKED" in str(e):
             return
         else:
